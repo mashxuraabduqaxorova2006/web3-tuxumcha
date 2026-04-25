@@ -1,16 +1,34 @@
-# React + Vite
+# SNAKEM - Web3 Tuxuncha O'yini 🐍🥚
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+SNAKEM - bu zamonaviy Cyberpunk uslubidagi, MetaMask hamyoni bilan integratsiya qilingan Web3 o'yini.
 
-Currently, two official plugins are available:
+## 🚀 O'yin haqida
+O'yinda siz futuristik "Cyber-Egg" (Kiber-Tuxum) ni yorishingiz va ichidan chiqadigan noyob ilonchalarni yig'ishingiz kerak. Har bir yorilgan tuxum uchun sizga **EGC (EggCoin)** tokenlari beriladi. 
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+O'yin to'liq blokcheyn texnologiyasi asosida ishlaydi va har bir yutug'ingiz hamyoningizda saqlanadi.
 
-## React Compiler
+## ✨ Asosiy xususiyatlar:
+- **🦊 Web3 Integratsiya:** O'yinga kirish uchun MetaMask hamyoni talab qilinadi. Barcha ma'lumotlar hamyoningizga bog'langan.
+- **🥚 Tuxum Yorilishi:** Tuxum 50%, 70% va 80% clicklarda bosqichma-bosqich yorilib boradi.
+- **🐍 Jonli Iloncha:** Tuxum yorilganda ichidan "tirik" (animatsiyali) yashil iloncha chiqadi. U qimirlaydi va nafas oladi!
+- **💎 Noyoblik (Rarity) Tizimi:** 
+  - **Oddiy (Common):** 10 EGC mukofot.
+  - **Noyob (Rare):** 25 EGC mukofot.
+  - **Afsonaviy (Legendary):** 100 EGC mukofot (5% ehtimollik bilan!).
+- **🛒 Do'kon (Upgrades):** Yutgan pullaringizga bolg'alar sotib olib, click kuchini oshirishingiz mumkin:
+  - **Kumush Bolg'a:** x2 click kuchi.
+  - **Oltin Bolg'a:** x5 click kuchi.
+  - **Olmos Parman:** x10 click kuchi!
+- **⛓ Blokcheyn Transaksiya:** Mukofotlarni darhol blokcheynga (hamyoningizga) o'tkazish imkoniyati.
+- **🌌 Premium Dizayn:** Futuristik Cyberpunk uslubi, neon effektlar, skanerlash animatsiyasi va daxshatli interfeys.
+- **📈 Level Tizimi:** O'ynagan sari tajribangiz (XP) oshib boradi va darajangiz ko'tariladi.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## 🕹 Qanday o'ynash kerak?
+1. O'yinga kiring va MetaMask hamyoningizni ulang.
+2. Tuxumni 100 marta bosing (yoki sotib olingan bolg'alar bilan tezroq yoring).
+3. Iloncha chiqqanda **"Blokcheynga O'tkazish"** tugmasini bosing.
+4. Do'kondan yangi qurollar sotib oling va yanada ko'proq EGC to'plang!
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+---
+Loyiha muallifi: **mashxuraabduqaxorova2006**
+Loyiha manzili: [https://github.com/mashxuraabduqaxorova2006/M-Game-Web3](https://github.com/mashxuraabduqaxorova2006/M-Game-Web3)
