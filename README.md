@@ -1,4 +1,4 @@
-# SNAKEM - Web3 Tuxuncha O'yini 🐍🥚
+# SNAKEM - Web3 Tuxumcha O'yini 🐍🥚
 
 SNAKEM - bu zamonaviy Cyberpunk uslubidagi, MetaMask hamyoni bilan integratsiya qilingan Web3 o'yini.
 

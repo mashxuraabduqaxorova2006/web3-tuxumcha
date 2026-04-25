@@ -106,6 +106,7 @@ export default function App() {
         <div className="scan-line"></div>
         <div className="auth-card">
           <h1 className="auth-title">AUTHENTICATION REQUIRED</h1>
+          <p style={{marginBottom:'2rem', color:'#888', letterSpacing:'2px'}}>SYSTEM STATUS: LOCKED | Web3 Tuxumcha</p>
           <button className="auth-btn" onClick={connectWallet}>INITIALIZE METAMASK</button>
         </div>
       </div>
