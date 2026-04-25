@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GameM - Tuxumcha O'yini</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:'Rajdhani',sans-serif;
+  background:#03030f;
+  color:#fff;
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  overflow:hidden;
+  position:relative;
+}
+canvas#bg{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none}
+
+.wrap{
+  position:relative;z-index:10;
+  width:100%;max-width:920px;
+  padding:18px 20px;
+  display:flex;flex-direction:column;align-items:center;gap:18px;
+}
+
+/* ── HEADER ── */
+header{
+  width:100%;display:flex;justify-content:space-between;align-items:center;
+  padding:14px 28px;
+  background:rgba(8,8,25,0.75);
+  border:1px solid rgba(0,255,255,0.18);
+  border-radius:16px;backdrop-filter:blur(14px);
+  box-shadow:0 4px 30px rgba(0,0,0,0.5);
+}
+.logo{
+  font-family:'Orbitron',sans-serif;font-size:1.9rem;font-weight:900;
+  background:linear-gradient(90deg,#00ffff,#a855f7);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  letter-spacing:2px;
+}
+#walletBtn{
+  background:rgba(168,85,247,0.15);
+  border:1px solid #a855f7;color:#d4a5ff;
+  font-family:'Rajdhani',sans-serif;font-size:1rem;font-weight:700;
+  padding:10px 22px;border-radius:10px;cursor:pointer;transition:.3s;
+}
+#walletBtn:hover{background:rgba(168,85,247,0.4);box-shadow:0 0 20px rgba(168,85,247,0.5)}
+#walletBtn.on{border-color:#00ffff;color:#00ffff;background:rgba(0,255,255,0.1)}
+
+/* ── STATS ── */
+.stats{
+  display:flex;gap:40px;
+  background:rgba(8,8,25,0.75);
+  border:1px solid rgba(255,255,255,0.07);
+  border-radius:16px;padding:16px 50px;backdrop-filter:blur(14px);
+}
+.stat{display:flex;flex-direction:column;align-items:center;gap:3px}
+.slbl{font-size:.78rem;color:#777;text-transform:uppercase;letter-spacing:1.5px}
+.sval{
+  font-family:'Orbitron',sans-serif;font-size:1.8rem;font-weight:700;
+  color:#ffd700;line-height:1.1;
+  font-variant-numeric:normal;
+  font-feature-settings:"zero" 0;
+}
+.sval.c{color:#00ffff}
+.sval.p{color:#ff79c6}
+
+/* ── EGG STAGE ── */
+.stage{
+  position:relative;width:310px;height:400px;
+  display:flex;justify-content:center;align-items:center;
+}
+.aura{
+  position:absolute;width:290px;height:290px;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,215,0,0.18) 0%,transparent 70%);
+  animation:glw 3s ease-in-out infinite;pointer-events:none;
+}
+@keyframes glw{0%,100%{transform:scale(.9);opacity:.5}50%{transform:scale(1.2);opacity:1}}
+
+#egg{
+  width:175px;height:245px;
+  border-radius:50% 50% 50% 50%/60% 60% 40% 40%;
+  background:radial-gradient(ellipse at 32% 26%,#fffde7 0%,#ffd700 32%,#b8860b 72%,#5c4306 100%);
+  box-shadow:
+    inset -14px -14px 35px rgba(0,0,0,0.55),
+    inset 9px 9px 28px rgba(255,255,255,0.75),
+    0 22px 55px rgba(0,0,0,0.85),
+    0 0 90px rgba(255,215,0,0.22);
+  cursor:pointer;position:relative;overflow:visible;
+  transition:filter .2s,box-shadow .3s;
+  user-select:none;
+}
+#egg:hover{
+  box-shadow:
+    inset -14px -14px 35px rgba(0,0,0,0.55),
+    inset 9px 9px 28px rgba(255,255,255,0.75),
+    0 22px 55px rgba(0,0,0,0.85),
+    0 0 130px rgba(255,215,0,0.4);
+}
+#egg.shk{animation:sk .32s ease both}
+@keyframes sk{
+  0%,100%{transform:rotate(0) scale(1)}
+  20%{transform:rotate(-7deg) scale(1.06)}
+  40%{transform:rotate(7deg) scale(1.06)}
+  60%{transform:rotate(-4deg) scale(1.03)}
+  80%{transform:rotate(4deg) scale(1.03)}
+}
+
+/* SVG cracks */
+#esvg{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;overflow:visible}
+.ck{
+  fill:none;stroke:#1a0d00;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;
+  opacity:0;transition:opacity .5s;
+  filter:drop-shadow(0 0 2px rgba(255,150,0,.4));
+}
+
+/* ── PROGRESS ── */
+.prow{width:430px;display:flex;flex-direction:column;align-items:center;gap:10px}
+.plbl{font-family:'Orbitron',sans-serif;font-size:1.25rem;letter-spacing:3px;color:#ddd}
+.pbar{
+  width:100%;height:20px;
+  background:rgba(255,255,255,0.07);
+  border:1px solid rgba(255,255,255,0.1);
+  border-radius:12px;overflow:hidden;
+}
+.pfill{
+  height:100%;width:0%;
+  background:linear-gradient(90deg,#a855f7,#00ffff);
+  border-radius:12px;
+  box-shadow:0 0 14px rgba(0,255,255,0.5);
+  position:relative;transition:width .25s ease;
+}
+.pfill::after{
+  content:'';position:absolute;top:0;left:0;right:0;bottom:0;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.35),transparent);
+  animation:sh 1.8s infinite linear;
+}
+@keyframes sh{0%{transform:translateX(-150%)}100%{transform:translateX(200%)}}
+
+/* ── BONUS BADGES ── */
+.badges{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.bdg{
+  background:rgba(255,215,0,0.08);
+  border:1px solid rgba(255,215,0,0.25);
+  border-radius:10px;padding:7px 16px;
+  font-size:.9rem;color:#ffd700;
+  transition:all .4s;opacity:.3;
+}
+.bdg.active{opacity:1;background:rgba(255,215,0,0.18);border-color:rgba(255,215,0,0.7);box-shadow:0 0 12px rgba(255,215,0,0.3)}
+
+/* ── WITHDRAW BUTTON ── */
+#wdBtn{
+  background:linear-gradient(135deg,#ff007f,#a855f7);
+  color:#fff;font-family:'Orbitron',sans-serif;font-size:1rem;font-weight:700;
+  padding:14px 42px;border:none;border-radius:30px;cursor:pointer;
+  box-shadow:0 8px 22px rgba(255,0,127,0.38);
+  transition:.25s;text-transform:uppercase;letter-spacing:2px;
+}
+#wdBtn:hover:not(:disabled){transform:translateY(-3px);box-shadow:0 14px 30px rgba(255,0,127,0.55)}
+#wdBtn:disabled{background:linear-gradient(135deg,#333,#444);color:#666;cursor:not-allowed;box-shadow:none}
+
+/* ── FLOATING +N ── */
+.fly{
+  position:fixed;font-family:'Orbitron',sans-serif;font-size:1.3rem;
+  color:#ffd700;font-weight:700;pointer-events:none;
+  text-shadow:0 0 10px rgba(255,215,0,.8);
+  animation:flu .85s ease-out forwards;z-index:999;
+}
+@keyframes flu{
+  0%{opacity:1;transform:translateY(0) scale(.8)}
+  30%{opacity:1;transform:translateY(-20px) scale(1.2)}
+  100%{opacity:0;transform:translateY(-80px) scale(.7)}
+}
+
+/* ── MODAL ── */
+.mbg{
+  position:fixed;inset:0;
+  background:rgba(0,0,0,0.88);backdrop-filter:blur(18px);
+  display:flex;align-items:center;justify-content:center;
+  z-index:200;opacity:0;pointer-events:none;transition:.4s;
+}
+.mbg.show{opacity:1;pointer-events:all}
+.mbox{
+  background:linear-gradient(140deg,rgba(20,10,35,0.97),rgba(8,8,18,0.97));
+  border:2px solid #ffd700;border-radius:24px;
+  padding:50px 48px;text-align:center;max-width:470px;width:90%;
+  box-shadow:0 0 60px rgba(255,215,0,.2);
+  transform:scale(.82) translateY(45px);
+  transition:.4s cubic-bezier(.175,.885,.32,1.275);
+}
+.mbg.show .mbox{transform:scale(1) translateY(0)}
+.mbox h2{font-family:'Orbitron',sans-serif;font-size:2rem;color:#ffd700;text-shadow:0 0 16px rgba(255,215,0,.6);margin-bottom:10px}
+.mbox p{color:#ccc;font-size:1.05rem;line-height:1.5;margin-bottom:6px}
+.rbig{display:block;font-family:'Orbitron',sans-serif;font-size:3.6rem;font-weight:900;color:#00ffff;text-shadow:0 0 22px rgba(0,255,255,.65);margin:14px 0}
+.mbtns{display:flex;gap:14px;justify-content:center;margin-top:20px;flex-wrap:wrap}
+.mb{padding:12px 28px;border-radius:30px;font-family:'Rajdhani',sans-serif;font-size:1.1rem;font-weight:700;cursor:pointer;transition:.22s;border:none}
+.mb.pri{background:linear-gradient(45deg,#a855f7,#00ffff);color:#000}
+.mb.pri:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(0,255,255,.35)}
+.mb.gho{background:transparent;border:2px solid #ffd700;color:#ffd700}
+.mb.gho:hover{background:#ffd700;color:#000}
+
+/* notice */
+#notice{font-size:.82rem;color:#ff6b6b;text-align:center;max-width:500px}
+</style>
+</head>
+<body>
+<canvas id="bg"></canvas>
+
+<div class="wrap">
+  <header>
+    <div class="logo">🥚 GAMEM</div>
+    <button id="walletBtn" onclick="connectWallet()">🦊 MetaMask Ulash</button>
+  </header>
+
+  <div class="stats">
+    <div class="stat">
+      <span class="slbl">Yorilgan Tuxumlar</span>
+      <span class="sval" id="sEggs">0</span>
+    </div>
+    <div class="stat">
+      <span class="slbl">EGC Balans</span>
+      <span class="sval c" id="sBal">0.00</span>
+    </div>
+    <div class="stat">
+      <span class="slbl">Bonus x</span>
+      <span class="sval p" id="sMulti">x1</span>
+    </div>
+  </div>
+
+  <div class="stage">
+    <div class="aura"></div>
+    <div id="egg" onclick="clickEgg(event)">
+      <svg id="esvg" viewBox="0 0 175 245">
+        <path id="c1" class="ck" d="M88 15 Q98 55 78 88 Q68 108 98 138"/>
+        <path id="c2" class="ck" d="M148 78 Q118 98 108 138 Q93 165 68 188"/>
+        <path id="c3" class="ck" d="M28 148 Q58 162 73 198 Q88 218 128 238"/>
+        <path id="c4" class="ck" d="M58 48 Q42 78 53 108 Q63 138 48 158"/>
+        <path id="c5" class="ck" d="M118 28 Q138 68 128 98 Q118 128 143 158"/>
+      </svg>
+    </div>
+  </div>
+
+  <div class="prow">
+    <div class="plbl" id="plbl">0 / 100</div>
+    <div class="pbar"><div class="pfill" id="pfill"></div></div>
+  </div>
+
+  <div class="badges">
+    <div class="bdg" id="b1">⚡ 25 bosish — x1.5</div>
+    <div class="bdg" id="b2">🔥 50 bosish — x2</div>
+    <div class="bdg" id="b3">💎 75 bosish — x3</div>
+    <div class="bdg" id="b4">🌟 100 — TUXUM YORILDI!</div>
+  </div>
+
+  <button id="wdBtn" disabled onclick="withdraw()">💰 EGCni Hamyonga O'tkazish</button>
+  <div id="notice"></div>
+</div>
+
+<!-- Modal -->
+<div class="mbg" id="modal">
+  <div class="mbox">
+    <h2>🎉 TUXUM YORILDI!</h2>
+    <p>Siz ajoyib mukofot qozondingiz!</p>
+    <span class="rbig" id="rewardBig">+10 EGC</span>
+    <p id="bonusMsg" style="color:#ff79c6;font-size:1rem"></p>
+    <div class="mbtns">
+      <button class="mb pri" onclick="claimOnChain()">⛓ Blockchain Tasdiqlash</button>
+      <button class="mb gho" onclick="closeModal()">Davom Etish</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ── CANVAS STARS ── */
+const cv = document.getElementById('bg');
+const cx = cv.getContext('2d');
+let st = [];
+function rsz(){cv.width=innerWidth;cv.height=innerHeight}
+function ist(){st=[];for(let i=0;i<200;i++)st.push({x:Math.random()*cv.width,y:Math.random()*cv.height,r:Math.random()*1.5+.3,s:Math.random()*.4+.1,a:Math.random()})}
+function anim(){
+  cx.clearRect(0,0,cv.width,cv.height);
+  st.forEach(s=>{
+    s.a+=.01*s.s*(Math.random()>.5?1:-1);
+    s.a=Math.max(.1,Math.min(1,s.a));
+    cx.beginPath();cx.arc(s.x,s.y,s.r,0,Math.PI*2);
+    cx.fillStyle=`rgba(255,255,255,${s.a})`;cx.fill();
+  });
+  requestAnimationFrame(anim);
+}
+rsz();window.addEventListener('resize',()=>{rsz();ist()});ist();anim();
+
+/* ── GAME STATE ── */
+const CONTRACT="0xB38ceA20FAd59105E19d9fbDB6343D50A35e8b0C";
+const ABI=[
+  {inputs:[],name:"recordCrack",outputs:[],stateMutability:"nonpayable",type:"function"},
+  {inputs:[],name:"claimRewards",outputs:[],stateMutability:"nonpayable",type:"function"},
+  {inputs:[{internalType:"address",name:"",type:"address"}],name:"totalCracks",outputs:[{internalType:"uint256",name:"",type:"uint256"}],stateMutability:"view",type:"function"},
+  {inputs:[{internalType:"address",name:"",type:"address"}],name:"userBalances",outputs:[{internalType:"uint256",name:"",type:"uint256"}],stateMutability:"view",type:"function"}
+];
+
+let account=null,clicks=0,totalEggs=0,balance=0,mult=1;
+
+/* ── WALLET ── */
+async function connectWallet(){
+  if(!window.ethereum){alert("MetaMask o'rnatilmagan!");return}
+  try{
+    const accs=await ethereum.request({method:'eth_requestAccounts'});
+    account=accs[0];
+    document.getElementById('walletBtn').textContent=`🟢 ${account.slice(0,6)}...${account.slice(-4)}`;
+    document.getElementById('walletBtn').classList.add('on');
+    await loadData();
+  }catch(e){console.error(e)}
+}
+
+async function loadData(){
+  try{
+    const prov=new ethers.providers.Web3Provider(window.ethereum);
+    const ct=new ethers.Contract(CONTRACT,ABI,prov);
+    const [cr,bl]=await Promise.all([ct.totalCracks(account),ct.userBalances(account)]);
+    totalEggs=cr.toNumber();
+    balance=parseFloat(ethers.utils.formatEther(bl));
+  }catch(e){
+    console.warn("Contract ulanmadi:",e.message);
+    totalEggs=parseInt(localStorage.getItem('eg_'+account)||0);
+    balance=parseFloat(localStorage.getItem('bl_'+account)||0);
+    document.getElementById('notice').textContent="⚠️ Smart contract topilmadi — mahalliy rejim aktiv";
+  }
+  renderUI();
+}
+
+/* ── EGG CLICK ── */
+function clickEgg(e){
+  if(!account){connectWallet();return}
+  clicks++;
+
+  // shake
+  const egg=document.getElementById('egg');
+  egg.classList.remove('shk');void egg.offsetWidth;egg.classList.add('shk');
+
+  // floating +N text
+  const d=document.createElement('div');
+  d.className='fly';
+  d.textContent='+'+mult;
+  d.style.left=(e.clientX-18)+'px';
+  d.style.top=(e.clientY-18)+'px';
+  document.body.appendChild(d);
+  setTimeout(()=>d.remove(),860);
+
+  // darken egg
+  egg.style.filter=`brightness(${1-clicks/100*0.28})`;
+
+  // show cracks progressively
+  if(clicks>=20)document.getElementById('c1').style.opacity=1;
+  if(clicks>=40)document.getElementById('c2').style.opacity=1;
+  if(clicks>=60)document.getElementById('c3').style.opacity=1;
+  if(clicks>=80)document.getElementById('c4').style.opacity=1;
+  if(clicks>=95)document.getElementById('c5').style.opacity=1;
+
+  // bonuses
+  if(clicks>=25&&mult<1.5){mult=1.5;document.getElementById('b1').classList.add('active')}
+  if(clicks>=50&&mult<2){mult=2;document.getElementById('b2').classList.add('active')}
+  if(clicks>=75&&mult<3){mult=3;document.getElementById('b3').classList.add('active')}
+
+  renderProg();
+  if(clicks>=100)setTimeout(crackEgg,280);
+}
+
+function renderProg(){
+  const p=Math.min(clicks,100);
+  document.getElementById('pfill').style.width=p+'%';
+  document.getElementById('plbl').textContent=p+' / 100';
+  document.getElementById('sMulti').textContent='x'+mult;
+}
+
+function crackEgg(){
+  document.getElementById('b4').classList.add('active');
+  const earned=Math.round(10*mult);
+  balance+=earned;totalEggs++;
+  const wasMult=mult;
+  clicks=0;mult=1;
+
+  localStorage.setItem('eg_'+account,totalEggs);
+  localStorage.setItem('bl_'+account,balance);
+
+  document.getElementById('rewardBig').textContent='+'+earned+' EGC';
+  document.getElementById('bonusMsg').textContent=wasMult>1?`🔥 ${wasMult}x Bonus ishlatildi! Extra mukofot qo'shildi!`:'';
+  document.getElementById('modal').classList.add('show');
+
+  setTimeout(()=>{
+    const egg=document.getElementById('egg');
+    egg.style.filter='';
+    ['c1','c2','c3','c4','c5'].forEach(id=>document.getElementById(id).style.opacity=0);
+    ['b1','b2','b3','b4'].forEach(id=>document.getElementById(id).classList.remove('active'));
+    renderProg();renderUI();
+  },500);
+}
+
+function closeModal(){document.getElementById('modal').classList.remove('show');renderUI()}
+
+async function claimOnChain(){
+  if(!account)return;
+  try{
+    const prov=new ethers.providers.Web3Provider(window.ethereum);
+    const sg=prov.getSigner();
+    const ct=new ethers.Contract(CONTRACT,ABI,sg);
+    const tx=await ct.recordCrack();
+    await tx.wait();
+    alert("✅ Blockchain orqali muvaffaqiyatli tasdiqlandi!");
+  }catch(e){
+    console.warn(e.message);
+    alert("⚠️ Smart contract topilmadi. Balans mahalliy saqlandi.");
+  }
+  closeModal();
+}
+
+async function withdraw(){
+  if(balance<=0){alert("Balans 0!");return}
+  if(!account){connectWallet();return}
+  try{
+    const prov=new ethers.providers.Web3Provider(window.ethereum);
+    const sg=prov.getSigner();
+    const ct=new ethers.Contract(CONTRACT,ABI,sg);
+    const tx=await ct.claimRewards();
+    await tx.wait();
+    alert(`✅ ${balance.toFixed(2)} EGC hamyoningizga o'tkazildi!`);
+    balance=0;
+  }catch(e){
+    console.warn(e.message);
+    alert(`⚠️ ${balance.toFixed(2)} EGC simulyatsiya qilindi (contract topilmadi).`);
+    balance=0;
+  }
+  localStorage.setItem('bl_'+account,0);
+  renderUI();
+}
+
+function renderUI(){
+  document.getElementById('sEggs').textContent=totalEggs;
+  document.getElementById('sBal').textContent=balance.toFixed(2);
+  document.getElementById('wdBtn').disabled=balance<=0;
+}
+
+/* auto connect */
+if(window.ethereum){
+  ethereum.request({method:'eth_accounts'}).then(accs=>{
+    if(accs.length){
+      account=accs[0];
+      document.getElementById('walletBtn').textContent=`🟢 ${account.slice(0,6)}...${account.slice(-4)}`;
+      document.getElementById('walletBtn').classList.add('on');
+      loadData();
+    }
+  });
+}
+</script>
+</body>
+</html>

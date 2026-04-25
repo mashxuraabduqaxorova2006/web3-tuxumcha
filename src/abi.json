@@ -1,0 +1,135 @@
+[
+  {
+    "inputs": [],
+    "stateMutability": "nonpayable",
+    "type": "constructor"
+  },
+  {
+    "inputs": [],
+    "name": "recordCrack",
+    "outputs": [
+      { "internalType": "uint256", "name": "reward",       "type": "uint256" },
+      { "internalType": "bool",    "name": "isJackpot",    "type": "bool"    },
+      { "internalType": "bool",    "name": "isMilestone",  "type": "bool"    },
+      { "internalType": "uint8",   "name": "streak",       "type": "uint8"   }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "claimRewards",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "address", "name": "user", "type": "address" }
+    ],
+    "name": "getUserStats",
+    "outputs": [
+      { "internalType": "uint256", "name": "cracks",     "type": "uint256" },
+      { "internalType": "uint256", "name": "pending",    "type": "uint256" },
+      { "internalType": "uint256", "name": "streak",     "type": "uint256" },
+      { "internalType": "uint256", "name": "earned",     "type": "uint256" },
+      { "internalType": "uint256", "name": "egcBalance", "type": "uint256" }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getLeaderboard",
+    "outputs": [
+      { "internalType": "address[]", "name": "", "type": "address[]" }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "address", "name": "user", "type": "address" }
+    ],
+    "name": "getLeaderboardStats",
+    "outputs": [
+      { "internalType": "uint256", "name": "cracks", "type": "uint256" },
+      { "internalType": "uint256", "name": "earned", "type": "uint256" }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "tokenAddress",
+    "outputs": [
+      { "internalType": "address", "name": "", "type": "address" }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "address", "name": "", "type": "address" }
+    ],
+    "name": "totalCracks",
+    "outputs": [
+      { "internalType": "uint256", "name": "", "type": "uint256" }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "address", "name": "", "type": "address" }
+    ],
+    "name": "pendingRewards",
+    "outputs": [
+      { "internalType": "uint256", "name": "", "type": "uint256" }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "address", "name": "", "type": "address" }
+    ],
+    "name": "streakCount",
+    "outputs": [
+      { "internalType": "uint256", "name": "", "type": "uint256" }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      { "indexed": true,  "internalType": "address", "name": "user",        "type": "address" },
+      { "indexed": false, "internalType": "uint256", "name": "crackNumber", "type": "uint256" },
+      { "indexed": false, "internalType": "uint256", "name": "reward",      "type": "uint256" },
+      { "indexed": false, "internalType": "bool",    "name": "jackpot",     "type": "bool"    },
+      { "indexed": false, "internalType": "bool",    "name": "milestone",   "type": "bool"    },
+      { "indexed": false, "internalType": "uint8",   "name": "streakLevel", "type": "uint8"   }
+    ],
+    "name": "EggCracked",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      { "indexed": true,  "internalType": "address", "name": "user",   "type": "address" },
+      { "indexed": false, "internalType": "uint256", "name": "amount", "type": "uint256" }
+    ],
+    "name": "RewardClaimed",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      { "indexed": true,  "internalType": "address", "name": "user",   "type": "address" },
+      { "indexed": false, "internalType": "uint256", "name": "amount", "type": "uint256" }
+    ],
+    "name": "JackpotWon",
+    "type": "event"
+  }
+]
