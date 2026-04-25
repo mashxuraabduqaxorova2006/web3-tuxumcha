@@ -100,6 +100,31 @@ export default function App() {
     }, 2000);
   };
 
+  const disconnectWallet = () => {
+    setAccount(null);
+    setIsReady(false);
+    setClicks(0);
+    setCrackStage(0);
+    setIsBroken(false);
+    setShowReward(false);
+  };
+
+  const resetGame = () => {
+    if (window.confirm("O'yinni noldan boshlamoqchimisiz? Barcha yutuqlaringiz o'chib ketadi!")) {
+      setClicks(0);
+      setTotalCracks(0);
+      setWalletEGC('0');
+      setClickPower(1);
+      setCrackStage(0);
+      setIsBroken(false);
+      setShowReward(false);
+      
+      const storageKey = `cyber_egg_v5_${account}`;
+      localStorage.removeItem(storageKey);
+      alert("O'yin nollashtirildi!");
+    }
+  };
+
   if (!isReady) {
     return (
       <div className="auth-screen">
@@ -121,6 +146,7 @@ export default function App() {
         <div className="cyber-logo">CYBER-SNAKE</div>
         <div className="wallet-display">
             <span>WALLET:</span> <b>{parseFloat(walletEGC).toFixed(1)} EGC</b>
+            <button className="logout-mini-btn" onClick={disconnectWallet}>CHIQUISH</button>
         </div>
       </header>
 
@@ -183,6 +209,7 @@ export default function App() {
       <footer className="footer-nav">
         <button className={tab==='game'?'active':''} onClick={()=>setTab('game')}>🎮 O'YIN</button>
         <button className={tab==='shop'?'active':''} onClick={()=>setTab('shop')}>🛒 DO'KON</button>
+        <button className="reset-nav-btn" onClick={resetGame}>🔄 RESTART</button>
       </footer>
 
       <div className={`cyber-modal ${showReward ? 'show' : ''}`}>

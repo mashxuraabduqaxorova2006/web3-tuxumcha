@@ -102,3 +102,39 @@ header { padding: 1.5rem 4rem; display: flex; justify-content: space-between; al
 .modal-content { border: 3px solid var(--neon-cyan); background: #000; padding: 4rem; text-align: center; box-shadow: 0 0 100px var(--neon-cyan); border-radius: 20px; }
 .modal-val { font-size: 4rem; color: var(--neon-yellow); margin: 2rem 0; }
 .modal-btns { display: flex; flex-direction: column; gap: 10px; }
+
+/* ── New Buttons ── */
+.logout-mini-btn {
+  background: rgba(255, 0, 0, 0.1);
+  border: 1px solid #ff4444;
+  color: #ff4444;
+  padding: 0.3rem 0.8rem;
+  border-radius: 20px;
+  font-size: 0.6rem;
+  font-weight: 900;
+  margin-left: 15px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+.logout-mini-btn:hover {
+  background: #ff4444;
+  color: #fff;
+  box-shadow: 0 0 10px #ff4444;
+}
+
+.reset-nav-btn {
+  background: transparent;
+  border: 1px solid #ff9800 !important;
+  color: #ff9800 !important;
+  padding: 0.5rem 1rem !important;
+  border-radius: 10px;
+  font-size: 0.9rem !important;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.reset-nav-btn:hover {
+  background: #ff9800 !important;
+  color: #000 !important;
+  box-shadow: 0 0 20px #ff9800;
+}

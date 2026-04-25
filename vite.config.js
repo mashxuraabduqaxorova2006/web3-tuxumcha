@@ -4,8 +4,8 @@ import react from '@vitejs/plugin-react'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
+  base: '/web3-tuxumcha/', // YANGI NOM: web3-tuxumcha
   server: {
-    port: 5175,
-    allowedHosts: true // Hamma xostlarga (Localtunnel-ga) ruxsat berish
+    allowedHosts: true
   }
 })
