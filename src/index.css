@@ -30,6 +30,7 @@ body {
   z-index: 0;
   opacity: 0.5;
   animation: floatOrb 20s infinite alternate ease-in-out;
+  pointer-events: none;
 }
 .orb-1 { width: 400px; height: 400px; background: var(--neon-cyan); top: -100px; left: -100px; }
 .orb-2 { width: 500px; height: 500px; background: #4a00e0; bottom: -200px; right: -100px; animation-delay: -10s; }

@@ -76,6 +76,7 @@ export default function App() {
   };
 
   const handleEggClick = () => {
+    console.log("Egg clicked!", { isLoading, isMining, isBroken, showClaimModal });
     if (isLoading || isMining || isBroken || showClaimModal) return;
     setClicks(prev => {
       const n = prev + 1;
