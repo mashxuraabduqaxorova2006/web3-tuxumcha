@@ -208,6 +208,27 @@ header{
 
 /* notice */
 #notice{font-size:.82rem;color:#ff6b6b;text-align:center;max-width:500px}
+
+/* ── BLOCKCHAIN LEDGER ── */
+.blockchain-section { width: 100%; margin-top: 50px; display: flex; flex-direction: column; align-items: center; }
+.blockchain-section h2 { font-family: 'Orbitron', sans-serif; font-size: 2rem; color: #f8fafc; margin-bottom: 30px; display: flex; align-items: center; gap: 12px; }
+.blockchain-list { width: 100%; display: flex; flex-direction: column; gap: 0; align-items: center; }
+.block-wrapper { display: flex; flex-direction: column; align-items: center; width: 100%; }
+.block-connector { width: 2px; height: 40px; background: #3b82f6; position: relative; }
+.block-connector::after { content: '🔗'; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #0f172a; border-radius: 50%; padding: 4px; font-size: 0.9rem; border: 1px solid #3b82f6; }
+.block-item { width: 100%; background: #0f172a; border: 1px solid #3b82f6; border-radius: 20px; padding: 28px; box-shadow: 0 4px 20px rgba(0,0,0,0.5); }
+.block-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 20px; }
+.block-number { background: #3b82f6; color: #fff; font-family: 'Orbitron', sans-serif; font-size: 1.3rem; font-weight: 700; padding: 10px 24px; border-radius: 24px; box-shadow: 0 0 15px rgba(59,130,246,0.6); }
+.block-time { color: #94a3b8; font-size: 0.95rem; }
+.block-body { display: grid; grid-template-columns: 2fr 2fr 1fr; gap: 24px; }
+.block-body-bottom { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 24px; margin-top: 24px; }
+.data-row { display: flex; flex-direction: column; gap: 10px; }
+.data-row .label { font-size: 0.75rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; font-weight: 700; }
+.data-row .value-mono { font-family: monospace; font-size: 0.9rem; background: #0b0f19; padding: 14px; border-radius: 10px; color: #cbd5e1; word-break: break-all; border: 1px solid rgba(255,255,255,0.03); min-height: 48px; display: flex; align-items: center; }
+.data-row .value-mono.reward { color: #10b981; font-weight: bold; }
+@media(max-width:768px){
+  .block-body, .block-body-bottom { grid-template-columns: 1fr; }
+}
 </style>
 </head>
 <body>
@@ -261,6 +282,12 @@ header{
 
   <button id="wdBtn" disabled onclick="withdraw()">💰 EGCni Hamyonga O'tkazish</button>
   <div id="notice"></div>
+
+  <section class="blockchain-section" id="bcSection" style="display:none;">
+    <h2>🔗 Immutable Blockchain Ledger</h2>
+    <div class="blockchain-list" id="blockList"></div>
+  </section>
+
 </div>
 
 <!-- Modal -->
@@ -305,7 +332,77 @@ const ABI=[
   {inputs:[{internalType:"address",name:"",type:"address"}],name:"userBalances",outputs:[{internalType:"uint256",name:"",type:"uint256"}],stateMutability:"view",type:"function"}
 ];
 
-let account=null,clicks=0,totalEggs=0,balance=0,mult=1;
+let account=null,clicks=0,totalEggs=0,balance=0,mult=1,blocks=[];
+
+function renderBlocks(){
+  const bl=document.getElementById('blockList');
+  const bcs=document.getElementById('bcSection');
+  if(!bl || !bcs) return;
+  if(!blocks || blocks.length===0){
+    bcs.style.display='none';
+    return;
+  }
+  bcs.style.display='flex';
+  bl.innerHTML='';
+  
+  const rev = blocks.slice().reverse();
+  rev.forEach((b, i)=>{
+    const isFirst = (i === rev.length - 1);
+    const connector = !isFirst ? '<div class="block-connector"></div>' : '';
+    const minerStr = account ? (account.substring(0,8)+"...") : "0x00000...";
+    
+    bl.innerHTML+=`
+      <div class="block-wrapper">
+        <div class="block-item">
+          <div class="block-header">
+            <span class="block-number">Block #${b.index}</span>
+            <span class="block-time">${b.time}</span>
+          </div>
+          <div class="block-body">
+            <div class="data-row">
+              <span class="label">CURRENT HASH (SHA-256)</span>
+              <span class="value-mono">${b.hash}</span>
+            </div>
+            <div class="data-row">
+              <span class="label">PREVIOUS HASH</span>
+              <span class="value-mono">${b.prevHash}</span>
+            </div>
+            <div class="data-row">
+              <span class="label">PROOF (NONCE)</span>
+              <span class="value-mono">${b.nonce}</span>
+            </div>
+          </div>
+          <div class="block-body-bottom">
+            <div class="data-row">
+              <span class="label">BLOCK REWARD</span>
+              <span class="value-mono reward">${b.amount} EGC</span>
+            </div>
+            <div class="data-row">
+              <span class="label">MINER</span>
+              <span class="value-mono">${minerStr}</span>
+            </div>
+          </div>
+        </div>
+        ${!isFirst ? '<div class="block-connector"></div>' : ''}
+      </div>
+    `;
+  });
+}
+
+function addBlock(action, amt){
+  const index=(blocks.length>0?blocks[blocks.length-1].index+1:1);
+  const hash="0x0000"+Array.from({length:60},()=>Math.floor(Math.random()*16).toString(16)).join('');
+  const prevHash=blocks.length>0 ? blocks[blocks.length-1].hash : "0x0000000000000000000000000000000000000000000000000000000000000000";
+  const nonce=Math.floor(Math.random()*100000);
+  
+  blocks.push({index, hash, prevHash, nonce, action, amount:amt, time:new Date().toLocaleTimeString()});
+  if(account) localStorage.setItem('blocks_'+account, JSON.stringify(blocks));
+  renderBlocks();
+  
+  setTimeout(() => {
+    document.getElementById('bcSection').scrollIntoView({ behavior: 'smooth' });
+  }, 500);
+}
 
 /* ── WALLET ── */
 async function connectWallet(){
@@ -332,6 +429,8 @@ async function loadData(){
     balance=parseFloat(localStorage.getItem('bl_'+account)||0);
     document.getElementById('notice').textContent="⚠️ Smart contract topilmadi — mahalliy rejim aktiv";
   }
+  blocks=JSON.parse(localStorage.getItem('blocks_'+account)||"[]");
+  renderBlocks();
   renderUI();
 }
 
@@ -389,6 +488,7 @@ function crackEgg(){
   localStorage.setItem('eg_'+account,totalEggs);
   localStorage.setItem('bl_'+account,balance);
 
+  window.lastEarned = earned;
   document.getElementById('rewardBig').textContent='+'+earned+' EGC';
   document.getElementById('bonusMsg').textContent=wasMult>1?`🔥 ${wasMult}x Bonus ishlatildi! Extra mukofot qo'shildi!`:'';
   document.getElementById('modal').classList.add('show');
@@ -413,9 +513,11 @@ async function claimOnChain(){
     const tx=await ct.recordCrack();
     await tx.wait();
     alert("✅ Blockchain orqali muvaffaqiyatli tasdiqlandi!");
+    addBlock("Smart Contract Mint", window.lastEarned || 10);
   }catch(e){
     console.warn(e.message);
     alert("⚠️ Smart contract topilmadi. Balans mahalliy saqlandi.");
+    addBlock("Local Ledger Entry", window.lastEarned || 10);
   }
   closeModal();
 }
